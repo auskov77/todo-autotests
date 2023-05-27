@@ -4,7 +4,6 @@ import io.restassured.response.ValidatableResponse;
 import ru.buttonone.domain.Todo;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.baseURI;
@@ -13,7 +12,6 @@ import static ru.buttonone.utils.TodoApiConstants.TODOS;
 
 public enum DataGeneratorTodoId {
     INSTANCE;
-//    public List<Long> todoTestId = new CopyOnWriteArrayList<>();
 
     public synchronized long todoRandomId() {
         ValidatableResponse response = given()
@@ -30,11 +28,6 @@ public enum DataGeneratorTodoId {
         if (listId.contains(randomId)) {
             return todoRandomId();
         }
-//        todoTestId = todoList.stream().map(Todo::getId).collect(Collectors.toList());
-//        long randomId = (long) (Math.random() * (100 - 1)) + 1;
-//        if (todoTestId.contains(randomId)) {
-//            return todoRandomId();
-//        }
         return randomId;
     }
 

@@ -3,7 +3,9 @@ package ru.buttonone;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.buttonone.domain.Todo;
@@ -15,6 +17,7 @@ import ru.buttonone.utils.Props;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
@@ -23,10 +26,16 @@ import static ru.buttonone.utils.TodoApiConstants.*;
 public class BaseTest {
     public final static PrepareTodoService PREPARED_TODO_SERVICE = new PrepareTodoServiceImpl();
     public final Logger logger = LoggerFactory.getLogger(BaseTest.class);
+    protected SoftAssertions softAssertions;
 
     @BeforeAll
     public static void setup() {
         RestAssured.baseURI = Props.getProperty("base_uri");
+    }
+
+    @BeforeEach
+    public void softAssert(){
+        softAssertions = new SoftAssertions();
     }
 
     public static void entryTestData(String endPoint, Todo todo) throws IOException {
@@ -95,5 +104,10 @@ public class BaseTest {
                 .when()
                 .delete(endPoint + "/" + randomId)
                 .then();
+    }
+
+    public static boolean randomBooleans(){
+        Random booleans = new Random();
+        return booleans.nextBoolean();
     }
 }

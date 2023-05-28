@@ -51,7 +51,7 @@ public class BaseTest {
         Todo resultTodoWithId = null;
         for (Todo todo : todoList) {
             if (todo.getId() == id) {
-                resultTodoWithId = new Todo(todo.getId(), todo.getText(), todo.isCompleted());
+                resultTodoWithId = new Todo(todo.getId(), todo.getText(), todo.getCompleted());
             }
         }
         return resultTodoWithId;
@@ -101,6 +101,16 @@ public class BaseTest {
                 .auth()
                 .preemptive()
                 .basic(LOGIN, PASSWORD)
+                .when()
+                .delete(endPoint + "/" + randomId)
+                .then();
+    }
+
+    public static ValidatableResponse responseDeleteWithLoginAndPassword(String endPoint, long randomId, String login, String password){
+        return given()
+                .auth()
+                .preemptive()
+                .basic(login, password)
                 .when()
                 .delete(endPoint + "/" + randomId)
                 .then();

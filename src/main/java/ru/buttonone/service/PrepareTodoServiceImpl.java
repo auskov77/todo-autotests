@@ -37,4 +37,15 @@ public class PrepareTodoServiceImpl implements PrepareTodoService {
                 .delete(endPoint + "/" + id)
                 .then();
     }
+
+    @Override
+    public void requestDeleteMethodWithLoginAndPassword(String endPoint, long id, String login, String password) {
+        given()
+                .auth()
+                .preemptive()
+                .basic(login, password)
+                .when()
+                .delete(endPoint + "/" + id)
+                .then();
+    }
 }

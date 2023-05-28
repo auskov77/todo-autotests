@@ -18,7 +18,7 @@ public class TodoAppPositiveTest extends BaseTest {
 
     @DisplayName(" request Get")
     @Test
-    public void shouldHaveCorrectGetMethodNew() throws IOException {
+    public void shouldHaveCorrectGetMethod() throws IOException {
         logger.info("Begin checking the request Get");
         long id1 = dataGenerateRandomId();
         logger.info("Get: Inserting a test entity " + id1);
@@ -38,7 +38,7 @@ public class TodoAppPositiveTest extends BaseTest {
         Todo todoActualId2 = extractingTodoFromTheListOfReceivedTodos(todoList, id2);
         logger.info("Get: Checking that the received entities correspond to the expected values");
         assertAll(
-                () -> softAssertions.assertThat(validatableResponse.extract().statusCode()).isEqualTo(STATUS_CODE_POST_200),
+                () -> softAssertions.assertThat(validatableResponse.extract().statusCode()).isEqualTo(STATUS_CODE_200),
                 () -> softAssertions.assertThat(todoActualId1).isEqualTo(todoExpectedId1),
                 () -> softAssertions.assertThat(todoActualId2).isEqualTo(todoExpectedId2)
         );
@@ -51,7 +51,7 @@ public class TodoAppPositiveTest extends BaseTest {
 
     @DisplayName(" request Post")
     @Test
-    public void shouldHaveCorrectPostMethodNew() throws IOException {
+    public void shouldHaveCorrectPostMethod() throws IOException {
         logger.info("Begin checking request Post");
         long randomId = dataGenerateRandomId();
         logger.info("Post: Create a test entity with id=" + randomId + " and convert it to a json");
@@ -68,7 +68,7 @@ public class TodoAppPositiveTest extends BaseTest {
         Todo todoActual = extractingTodoFromTheListOfReceivedTodos(todoList, randomId);
         logger.info("Post: Checking that the received entities correspond to the expected values");
         assertAll(
-                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_POST_201),
+                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_201),
                 () -> softAssertions.assertThat(todoActual).isEqualTo(todoExpected)
         );
         logger.info("Post: Removing the test entity " + randomId);
@@ -78,7 +78,7 @@ public class TodoAppPositiveTest extends BaseTest {
 
     @DisplayName(" request Put")
     @Test
-    public void shouldHaveCorrectPutMethodNew() throws IOException {
+    public void shouldHaveCorrectPutMethod() throws IOException {
         logger.info("Begin checking request Put");
         String endPoint = baseURI + TODOS;
         long randomId = dataGenerateRandomId();
@@ -97,8 +97,8 @@ public class TodoAppPositiveTest extends BaseTest {
         Todo todoActual = extractingTodoFromTheListOfReceivedTodos(todoList, randomId);
         logger.info("Put: Checking that the received entities correspond to the expected values");
         assertAll(
-                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_POST_200),
-                () -> softAssertions.assertThat(todoActual.isCompleted()).isEqualTo(completedExpected)
+                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_200),
+                () -> softAssertions.assertThat(todoActual.getCompleted()).isEqualTo(completedExpected)
         );
         logger.info("Put: Removing the test entity " + randomId);
         deletingTestDataId(endPoint, randomId);
@@ -107,7 +107,7 @@ public class TodoAppPositiveTest extends BaseTest {
 
     @DisplayName(" request Delete")
     @Test
-    public void shouldHaveCorrectDeleteMethodNew() throws IOException {
+    public void shouldHaveCorrectDeleteMethod() throws IOException {
         logger.info("Begin checking request Delete");
         String endPoint = baseURI + TODOS;
         long expectedId = dataGenerateRandomId();
@@ -121,7 +121,7 @@ public class TodoAppPositiveTest extends BaseTest {
         List<Todo> todoList = extractTodoList(validatableResponse);
         logger.info("Delete: Checking that the received entities correspond to the expected values");
         assertAll(
-                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_POST_204),
+                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_204),
                 () -> softAssertions.assertThat(false).isEqualTo(todoList.contains(expectedId))
         );
         logger.info("End checking request Delete");

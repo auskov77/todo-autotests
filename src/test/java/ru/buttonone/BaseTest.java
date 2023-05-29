@@ -43,8 +43,12 @@ public class BaseTest {
         PREPARED_TODO_SERVICE.requestPostMethod(endPoint, jsonBodyId);
     }
 
-    public static void deletingTestDataId(String endPoint, long id) {
-        PREPARED_TODO_SERVICE.requestDeleteMethod(endPoint, id);
+    public static void deletingTestDataIdWithLoginAndPassword(String endPoint, long id, String login, String password) {
+        PREPARED_TODO_SERVICE.requestDeleteMethodWithLoginAndPassword(endPoint, id, login, password);
+    }
+
+    public static void gettingTestData(String endPoint){
+        PREPARED_TODO_SERVICE.requestGetMethod(endPoint);
     }
 
     public static Todo extractingTodoFromTheListOfReceivedTodos(List<Todo> todoList, long id) {

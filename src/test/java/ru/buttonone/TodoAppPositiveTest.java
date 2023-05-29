@@ -15,6 +15,7 @@ import static ru.buttonone.utils.TodoApiConstants.*;
 
 @DisplayName(" positive checks:")
 public class TodoAppPositiveTest extends BaseTest {
+    public static final String endPoint = baseURI + TODOS;
 
     @DisplayName(" request Get")
     @Test
@@ -43,9 +44,9 @@ public class TodoAppPositiveTest extends BaseTest {
                 () -> softAssertions.assertThat(todoActualId2).isEqualTo(todoExpectedId2)
         );
         logger.info("Get: Removing the test entity " + id1);
-        deletingTestDataId(baseURI + TODOS, id1);
+        deletingTestDataIdWithLoginAndPassword(endPoint, id1, LOGIN, PASSWORD);
         logger.info("Get: Removing the test entity " + id2);
-        deletingTestDataId(baseURI + TODOS, id2);
+        deletingTestDataIdWithLoginAndPassword(endPoint, id2, LOGIN, PASSWORD);
         logger.info("End checking request Get");
     }
 
@@ -58,7 +59,6 @@ public class TodoAppPositiveTest extends BaseTest {
         boolean completedTestData = randomBooleans();
         Todo todoExpected = new Todo(randomId, TEXT, completedTestData);
         String todoToJson = Converter.todoToJson(todoExpected);
-        String endPoint = baseURI + TODOS;
         logger.info("Post: Create a request Post with a test entity");
         ValidatableResponse response = responsePost(todoToJson, endPoint);
         logger.info("Post: Create a request Get with a test entity");
@@ -72,7 +72,7 @@ public class TodoAppPositiveTest extends BaseTest {
                 () -> softAssertions.assertThat(todoActual).isEqualTo(todoExpected)
         );
         logger.info("Post: Removing the test entity " + randomId);
-        deletingTestDataId(endPoint, randomId);
+        deletingTestDataIdWithLoginAndPassword(endPoint, randomId, LOGIN, PASSWORD);
         logger.info("End checking request Post");
     }
 
@@ -80,7 +80,6 @@ public class TodoAppPositiveTest extends BaseTest {
     @Test
     public void shouldHaveCorrectPutMethod() throws IOException {
         logger.info("Begin checking request Put");
-        String endPoint = baseURI + TODOS;
         long randomId = dataGenerateRandomId();
         logger.info("Put: Inserting a test entity " + randomId);
         entryTestData(endPoint, new Todo(randomId, TEXT, COMPLETED_TRUE));
@@ -88,7 +87,7 @@ public class TodoAppPositiveTest extends BaseTest {
         boolean completedExpected = COMPLETED_FALSE;
         Todo todoExpected = new Todo(randomId, TEXT, completedExpected);
         String todoToJson = Converter.todoToJson(todoExpected);
-        logger.info("Put: Create a request Post with a test entity with id=" + randomId);
+        logger.info("Put: Create a request Put with a test entity with id=" + randomId);
         ValidatableResponse response = responsePut(todoToJson, endPoint, randomId);
         logger.info("Put: Create a request Get with a test entity");
         ValidatableResponse validatableResponse = responseGet();
@@ -101,7 +100,7 @@ public class TodoAppPositiveTest extends BaseTest {
                 () -> softAssertions.assertThat(todoActual.getCompleted()).isEqualTo(completedExpected)
         );
         logger.info("Put: Removing the test entity " + randomId);
-        deletingTestDataId(endPoint, randomId);
+        deletingTestDataIdWithLoginAndPassword(endPoint, randomId, LOGIN, PASSWORD);
         logger.info("End checking request Put");
     }
 
@@ -109,12 +108,11 @@ public class TodoAppPositiveTest extends BaseTest {
     @Test
     public void shouldHaveCorrectDeleteMethod() throws IOException {
         logger.info("Begin checking request Delete");
-        String endPoint = baseURI + TODOS;
         long expectedId = dataGenerateRandomId();
         logger.info("Delete: Inserting a test entity " + expectedId);
         entryTestData(endPoint, new Todo(expectedId, TEXT, COMPLETED_TRUE));
         logger.info("Delete: Create a request Delete with a test entity with id=" + expectedId);
-        ValidatableResponse response = responseDelete(endPoint, expectedId);
+        ValidatableResponse response = responseDeleteWithLoginAndPassword(endPoint, expectedId, LOGIN, PASSWORD);
         logger.info("Delete: Create a request Get with a test entity");
         ValidatableResponse validatableResponse = responseGet();
         logger.info("Delete: Create a list of received entities");

@@ -1,7 +1,6 @@
 package ru.buttonone;
 
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,21 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.buttonone.domain.Todo;
 import ru.buttonone.service.Converter;
-import ru.buttonone.service.DataGeneratorTodoId;
-import ru.buttonone.service.PrepareTodoService;
-import ru.buttonone.service.PrepareTodoServiceImpl;
+import ru.buttonone.service.TodoService;
+import ru.buttonone.service.TodoServiceImpl;
 import ru.buttonone.utils.Props;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
-
-import static io.restassured.RestAssured.baseURI;
-import static io.restassured.RestAssured.given;
-import static ru.buttonone.utils.TodoApiConstants.*;
 
 public class BaseTest {
-    public final static PrepareTodoService PREPARED_TODO_SERVICE = new PrepareTodoServiceImpl();
+    public final static TodoService TODO_SERVICE = new TodoServiceImpl();
     public final Logger logger = LoggerFactory.getLogger(BaseTest.class);
     protected SoftAssertions softAssertions;
 
@@ -34,94 +27,28 @@ public class BaseTest {
     }
 
     @BeforeEach
-    public void softAssert(){
+    public void softAssert() {
         softAssertions = new SoftAssertions();
     }
 
-    public static void entryTestData(String endPoint, Todo todo) throws IOException {
+    public static ValidatableResponse requestPost(String endPoint, Todo todo) throws IOException {
         String jsonBodyId = Converter.todoToJson(todo);
-        PREPARED_TODO_SERVICE.requestPostMethod(endPoint, jsonBodyId);
+        return TODO_SERVICE.requestPostMethod(endPoint, jsonBodyId);
     }
 
-    public static void deletingTestDataIdWithLoginAndPassword(String endPoint, long id, String login, String password) {
-        PREPARED_TODO_SERVICE.requestDeleteMethodWithLoginAndPassword(endPoint, id, login, password);
+    public static ValidatableResponse requestDeleteIdWithLoginAndPassword(String endPoint, long id, String login, String password) {
+        return TODO_SERVICE.requestDeleteMethodWithLoginAndPassword(endPoint, id, login, password);
     }
 
-    public static void gettingTestData(String endPoint){
-        PREPARED_TODO_SERVICE.requestGetMethod(endPoint);
+    public static ValidatableResponse requestGet(String endPoint) {
+        return TODO_SERVICE.requestGetMethod(endPoint);
     }
 
-    public static Todo extractingTodoFromTheListOfReceivedTodos(List<Todo> todoList, long id) {
-        Todo resultTodoWithId = null;
-        for (Todo todo : todoList) {
-            if (todo.getId() == id) {
-                resultTodoWithId = new Todo(todo.getId(), todo.getText(), todo.getCompleted());
-            }
-        }
-        return resultTodoWithId;
+    public static List<Todo> extractTodoList(ValidatableResponse validatableResponse) {
+        return TODO_SERVICE.extractTodoList(validatableResponse);
     }
 
-    public static long dataGenerateRandomId(){
-        return DataGeneratorTodoId.INSTANCE.todoRandomId();
-    }
-
-    public static ValidatableResponse responseGet(){
-        return given()
-                .when()
-                .get(baseURI + TODOS)
-                .then();
-    }
-
-    public static List<Todo> extractTodoList(ValidatableResponse validatableResponse){
-        return validatableResponse
-                .extract()
-                .body()
-                .jsonPath()
-                .getList("", Todo.class);
-    }
-
-    public static ValidatableResponse responsePost(String todoToJson, String endPoint){
-        return given()
-                .contentType(ContentType.JSON)
-                .and()
-                .body(todoToJson)
-                .when()
-                .post(endPoint)
-                .then();
-    }
-
-    public static ValidatableResponse responsePut(String todoToJson, String endPoint, long randomId){
-        return given()
-                .contentType(ContentType.JSON)
-                .and()
-                .body(todoToJson)
-                .when()
-                .put(endPoint + "/" + randomId)
-                .then();
-    }
-
-    public static ValidatableResponse responseDelete(String endPoint, long randomId){
-        return given()
-                .auth()
-                .preemptive()
-                .basic(LOGIN, PASSWORD)
-                .when()
-                .delete(endPoint + "/" + randomId)
-                .then();
-    }
-
-    public static ValidatableResponse responseDeleteWithLoginAndPassword(String endPoint, long randomId, String login, String password){
-        return given()
-                .auth()
-                .preemptive()
-                .basic(login, password)
-                .when()
-                .delete(endPoint + "/" + randomId)
-                .then();
-    }
-
-    public static boolean randomBooleans(){
-        Random booleans = new Random();
-        return booleans.nextBoolean();
+    public static ValidatableResponse requestPut(String todoToJson, String endPoint, long id){
+        return TODO_SERVICE.requestPut(todoToJson, endPoint, id);
     }
 }

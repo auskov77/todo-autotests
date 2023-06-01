@@ -4,7 +4,6 @@ import io.restassured.response.ValidatableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.buttonone.domain.Todo;
-import ru.buttonone.service.Converter;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,30 +11,39 @@ import java.util.Random;
 
 import static io.restassured.RestAssured.baseURI;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static ru.buttonone.service.Converter.*;
 import static ru.buttonone.utils.TodoApiConstants.*;
+import static ru.buttonone.utils.TodoHelper.*;
 
 @DisplayName(" negative checks:")
 public class TodoAppNegativeTest extends BaseTest {
+    public static final String END_POINT = baseURI + DEFAULT_TODOS;
 
     @DisplayName(" request Get with ID<0")
     @Test
     public void shouldHaveIncorrectMethodGetWithIdLessThanZero() throws IOException {
         logger.info("Begin checking the request Get with ID<0");
-        long idDataTest = -1;
-        boolean completedDataTest = randomBooleans();
-        logger.info("Get ID<0:Formation of a test entity to test the request with id=" + idDataTest);
-        Todo todoExpectedDataTestId = new Todo(idDataTest, TEXT, completedDataTest);
-        logger.info("Get ID<0: Inserting a test entity " + idDataTest);
-        entryTestData(baseURI + TODOS, todoExpectedDataTestId);
-        logger.info("Get ID<0: Create a request Get");
-        ValidatableResponse validatableResponse = responseGet();
-        logger.info("Get ID<0: Create a list of received entities");
-        List<Todo> todoList = extractTodoList(validatableResponse);
-        logger.info("Get ID<0: Checking for a negative result");
-        assertAll(
-                () -> softAssertions.assertThat(validatableResponse.extract().statusCode()).isEqualTo(STATUS_CODE_200),
-                () -> softAssertions.assertThat(false).isEqualTo(todoList.contains(idDataTest))
+
+        long actualId = -1;
+
+        logger.info("Pre-condition: Inserting a test entity with id=" + actualId);
+        requestPost(
+                END_POINT,
+                new Todo(actualId, DEFAULT_TEXT, randomBooleans())
         );
+
+        logger.info("Create a request Get");
+        ValidatableResponse validatableResponseActual = requestGet(END_POINT);
+
+        logger.info("Create a list of received entities");
+        List<Todo> todoList = extractTodoList(validatableResponseActual);
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(validatableResponseActual.extract().statusCode()).isEqualTo(STATUS_CODE_200),
+                () -> softAssertions.assertThat(todoList.contains(actualId)).isEqualTo(false)
+        );
+
         logger.info("End checking request Get with ID<0");
     }
 
@@ -43,23 +51,24 @@ public class TodoAppNegativeTest extends BaseTest {
     @Test
     public void shouldHaveIncorrectMethodPostWithIdLessThenZero() throws IOException {
         logger.info("Begin checking request Post with ID<0");
-        long idDataTest = -1;
-        logger.info("Post ID<0: Create a test entity with id=" + idDataTest + " and convert it to a json");
-        boolean completedDataTest = randomBooleans();
-        Todo todoExpectedDataTestId = new Todo(idDataTest, TEXT, completedDataTest);
-        String todoToJson = Converter.todoToJson(todoExpectedDataTestId);
-        String endPoint = baseURI + TODOS;
-        logger.info("Post ID<0: Create a request Post with a test entity");
-        ValidatableResponse response = responsePost(todoToJson, endPoint);
-        logger.info("Post ID<0: Create a request Get with a test entity");
-        ValidatableResponse validatableResponse = responseGet();
-        logger.info("Post ID<0: Create a list of received entities");
-        List<Todo> todoList = extractTodoList(validatableResponse);
-        logger.info("Post ID<0: Checking for a negative result");
-        assertAll(
-                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_400),
-                () -> softAssertions.assertThat(false).isEqualTo(todoList.contains(idDataTest))
+
+        long actualId = -1;
+
+        logger.info("Create a request Post with a test entity");
+        ValidatableResponse responseActual = requestPost(
+                END_POINT,
+                new Todo(actualId, DEFAULT_TEXT, randomBooleans())
         );
+
+        logger.info("Create a list of received entities from request Get");
+        List<Todo> todoList = extractTodoList(requestGet(END_POINT));
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(responseActual.extract().statusCode()).isEqualTo(STATUS_CODE_400),
+                () -> softAssertions.assertThat(todoList.contains(actualId)).isEqualTo(false)
+        );
+
         logger.info("End checking request Post with ID<0");
     }
 
@@ -67,22 +76,22 @@ public class TodoAppNegativeTest extends BaseTest {
     @Test
     public void shouldHaveIncorrectMethodPostWithIdIsNull() throws IOException {
         logger.info("Begin checking request Post with ID is null");
-        logger.info("Post ID=null: Create a test entity with id=" + null + " and convert it to a json");
-        boolean completedDataTest = randomBooleans();
-        Todo todoExpectedDataTestId = new Todo(null, TEXT, completedDataTest);
-        String todoToJson = Converter.todoToJson(todoExpectedDataTestId);
-        String endPoint = baseURI + TODOS;
-        logger.info("Post ID=null: Create a request Post with a test entity");
-        ValidatableResponse response = responsePost(todoToJson, endPoint);
-        logger.info("Post ID=null: Create a request Get with a test entity");
-        ValidatableResponse validatableResponse = responseGet();
-        logger.info("Post ID=null: Create a list of received entities");
-        List<Todo> todoList = extractTodoList(validatableResponse);
-        logger.info("Post ID=null: Checking for a negative result");
-        assertAll(
-                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_400),
-                () -> softAssertions.assertThat(false).isEqualTo(todoList.contains(null))
+
+        logger.info("Create a request Post with a test entity");
+        ValidatableResponse responseActual = requestPost(
+                END_POINT,
+                new Todo(null, DEFAULT_TEXT, randomBooleans())
         );
+
+        logger.info("Create a list of received entities from request Get");
+        List<Todo> todoList = extractTodoList(requestGet(END_POINT));
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(responseActual.extract().statusCode()).isEqualTo(STATUS_CODE_400),
+                () -> softAssertions.assertThat(todoList.contains(null)).isEqualTo(false)
+        );
+
         logger.info("End checking request Post with ID=null");
     }
 
@@ -90,23 +99,24 @@ public class TodoAppNegativeTest extends BaseTest {
     @Test
     public void shouldHaveIncorrectPostMethodWithTextNull() throws IOException {
         logger.info("Begin checking request Post with Text is null");
-        long idDataTest = dataGenerateRandomId();
-        logger.info("Post Text=null: Create a test entity with id=" + idDataTest + " and convert it to a json");
-        boolean completedDataTest = randomBooleans();
-        Todo todoExpectedDataTestId = new Todo(idDataTest, null, completedDataTest);
-        String todoToJson = Converter.todoToJson(todoExpectedDataTestId);
-        String endPoint = baseURI + TODOS;
-        logger.info("Post Text=null: Create a request Post with a test entity");
-        ValidatableResponse response = responsePost(todoToJson, endPoint);
-        logger.info("Post Text=null: Create a request Get with a test entity");
-        ValidatableResponse validatableResponse = responseGet();
-        logger.info("Post Text=null: Create a list of received entities");
-        List<Todo> todoList = extractTodoList(validatableResponse);
-        logger.info("Post Text=null: Checking for a negative result");
-        assertAll(
-                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_400),
-                () -> softAssertions.assertThat(false).isEqualTo(todoList.contains(idDataTest))
+
+        long actualId = dataGenerateRandomId();
+
+        logger.info("Create a request Post with a test entity");
+        ValidatableResponse responseActual = requestPost(
+                END_POINT,
+                new Todo(actualId, null, randomBooleans())
         );
+
+        logger.info("Create a list of received entities");
+        List<Todo> todoList = extractTodoList(requestGet(END_POINT));
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(responseActual.extract().statusCode()).isEqualTo(STATUS_CODE_400),
+                () -> softAssertions.assertThat(todoList.contains(actualId)).isEqualTo(false)
+        );
+
         logger.info("End checking request Post with Text=null");
     }
 
@@ -114,113 +124,231 @@ public class TodoAppNegativeTest extends BaseTest {
     @Test
     public void shouldHaveIncorrectPostMethodWithCompletedNull() throws IOException {
         logger.info("Begin checking request Post with Completed is null");
-        long idDataTest = dataGenerateRandomId();
-        logger.info("Post Completed=null: Create a test entity with id=" + idDataTest + " and convert it to a json");
-        Todo todoExpectedDataTestId = new Todo(idDataTest, TEXT, null);
-        String todoToJson = Converter.todoToJson(todoExpectedDataTestId);
-        String endPoint = baseURI + TODOS;
-        logger.info("Post Completed=null: Create a request Post with a test entity");
-        ValidatableResponse response = responsePost(todoToJson, endPoint);
-        logger.info("Post Completed=null: Create a request Get with a test entity");
-        ValidatableResponse validatableResponse = responseGet();
-        logger.info("Post Completed=null: Create a list of received entities");
-        List<Todo> todoList = extractTodoList(validatableResponse);
-        logger.info("Post Completed=null: Checking for a negative result");
-        assertAll(
-                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_400),
-                () -> softAssertions.assertThat(false).isEqualTo(todoList.contains(idDataTest))
+
+        long actualId = dataGenerateRandomId();
+
+        logger.info("Create a request Post with a test entity");
+        ValidatableResponse responseActual = requestPost(
+                END_POINT,
+                new Todo(actualId, DEFAULT_TEXT, null)
         );
+
+        logger.info("Create a list of received entities");
+        List<Todo> todoList = extractTodoList(requestGet(END_POINT));
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(responseActual.extract().statusCode()).isEqualTo(STATUS_CODE_400),
+                () -> softAssertions.assertThat(todoList.contains(actualId)).isEqualTo(false)
+        );
+
         logger.info("End checking request Post with Completed=null");
     }
 
-    @DisplayName(" request Put with Id, Text, Completed is null")
+    @DisplayName(" request Put with Id is null")
     @Test
-    public void shouldHaveIncorrectPutMethodWithDataTestNull() throws IOException {
+    public void shouldHaveIncorrectPutMethodWithIdNull() throws IOException {
         logger.info("Begin checking request Put with data is null");
+
         long idDataTest = dataGenerateRandomId();
-        logger.info("Put Data=null: Create a test entity with id=" + idDataTest + " and convert it to a json");
-        boolean completedDataTest = randomBooleans();
-        Todo todoEntryDataTest = new Todo(idDataTest, TEXT, completedDataTest);
-        String todoToJsonEntryDataTest = Converter.todoToJson(todoEntryDataTest);
-        String endPoint = baseURI + TODOS;
-        logger.info("Put Data=null: Create a test entity with id=" + idDataTest + " and convert it to a json");
-        responsePost(todoToJsonEntryDataTest, endPoint);
-        logger.info("Put Data=null: Create a test entity with a test entity with data is null");
-        Todo todoExpectedDataTestId = new Todo(null, null, null);
-        String todoToJson = Converter.todoToJson(todoExpectedDataTestId);
-        logger.info("Put Data=null: Create a request Put with a test entity with data is null");
-        ValidatableResponse responseExpectedPut = responsePut(todoToJson, endPoint, idDataTest);
-        logger.info("Put Data=null: Create a request Get with a test entity");
-        ValidatableResponse validatableResponse = responseGet();
-        logger.info("Put Data=null: Create a list of received entities");
-        List<Todo> todoList = extractTodoList(validatableResponse);
-        Todo todoActual = extractingTodoFromTheListOfReceivedTodos(todoList, idDataTest);
-        logger.info("Put Data=null: Checking for a negative result");
-        assertAll(
-                () -> softAssertions.assertThat(responseExpectedPut.extract().statusCode()).isEqualTo(STATUS_CODE_400),
-                () -> softAssertions.assertThat(idDataTest).isEqualTo(todoActual.getId()),
-                () -> softAssertions.assertThat(TEXT).isEqualTo(todoActual.getText()),
-                () -> softAssertions.assertThat(completedDataTest).isEqualTo(todoActual.getCompleted())
+
+        logger.info("Pre-condition: Entry a test entity with id=" + idDataTest);
+        requestPost(
+                END_POINT,
+                new Todo(idDataTest, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE)
         );
-        logger.info("Put Data=null: Removing the test entity " + idDataTest);
-        deletingTestDataIdWithLoginAndPassword(endPoint, idDataTest, LOGIN, PASSWORD);
-        logger.info("End checking request Put with Data=null");
+
+        logger.info("Create a request Put with a test entity with id is null");
+        ValidatableResponse responseActualPut = requestPut(
+                todoToJson(new Todo(null, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE)),
+                END_POINT,
+                idDataTest
+        );
+
+        logger.info("Extracting todoActual a list from request Get of received entities");
+        Todo todoActual = extractingTodoFromTheListOfReceivedTodos(extractTodoList(requestGet(END_POINT)), idDataTest);
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(responseActualPut.extract().statusCode()).isEqualTo(STATUS_CODE_400),
+                () -> {
+                    assert todoActual != null;
+                    softAssertions.assertThat(todoActual.getId()).isEqualTo(idDataTest);
+                }
+        );
+
+        logger.info("Post-condition: Removing the test entity with id=" + idDataTest);
+        requestDeleteIdWithLoginAndPassword(END_POINT, idDataTest, LOGIN, PASSWORD);
+
+        logger.info("End checking request Put with id is null");
+    }
+
+    @DisplayName(" request Put with Text is null")
+    @Test
+    public void shouldHaveIncorrectPutMethodWithTextNull() throws IOException {
+        logger.info("Begin checking request Put with data Text null");
+
+        long idDataTest = dataGenerateRandomId();
+
+        logger.info("Pre-condition: Entry a test entity with id=" + idDataTest);
+        requestPost(
+                END_POINT,
+                new Todo(idDataTest, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE)
+        );
+
+        logger.info("Create a request Put with a test entity with Text is null");
+        ValidatableResponse responseActualPut = requestPut(
+                todoToJson(new Todo(idDataTest, null, DEFAULT_COMPLETED_FALSE)),
+                END_POINT,
+                idDataTest
+        );
+
+        logger.info("Extracting todoActual a list from request Get of received entities");
+        Todo todoActual = extractingTodoFromTheListOfReceivedTodos(extractTodoList(requestGet(END_POINT)), idDataTest);
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(responseActualPut.extract().statusCode()).isEqualTo(STATUS_CODE_400),
+                () -> {
+                    assert todoActual != null;
+                    softAssertions.assertThat(todoActual.getText()).isEqualTo(DEFAULT_TEXT);
+                }
+        );
+
+        logger.info("Post-condition: Removing the test entity with id=" + idDataTest);
+        requestDeleteIdWithLoginAndPassword(END_POINT, idDataTest, LOGIN, PASSWORD);
+
+        logger.info("End checking request Put with Text is null");
+    }
+
+    @DisplayName(" request Put with Completed is null")
+    @Test
+    public void shouldHaveIncorrectPutMethodWithCompletedNull() throws IOException {
+        logger.info("Begin checking request Put with data Text null");
+
+        long idDataTest = dataGenerateRandomId();
+
+        logger.info("Pre-condition: Entry a test entity with id=" + idDataTest);
+        requestPost(
+                END_POINT,
+                new Todo(idDataTest, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE)
+        );
+
+        logger.info("Create a request Put with a test entity with Completed is null");
+        ValidatableResponse responseActualPut = requestPut(
+                todoToJson(new Todo(idDataTest, DEFAULT_TEXT, null)),
+                END_POINT,
+                idDataTest
+        );
+
+        logger.info("Extracting todoActual a list from request Get of received entities");
+        Todo todoActual = extractingTodoFromTheListOfReceivedTodos(extractTodoList(requestGet(END_POINT)), idDataTest);
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(responseActualPut.extract().statusCode()).isEqualTo(STATUS_CODE_400),
+                () -> {
+                    assert todoActual != null;
+                    softAssertions.assertThat(todoActual.getCompleted()).isEqualTo(DEFAULT_COMPLETED_FALSE);
+                }
+        );
+
+        logger.info("Post-condition: Removing the test entity with id=" + idDataTest);
+        requestDeleteIdWithLoginAndPassword(END_POINT, idDataTest, LOGIN, PASSWORD);
+
+        logger.info("End checking request Put with Completed is null");
     }
 
     @DisplayName(" request Delete with Id is missing")
     @Test
     public void shouldHaveIncorrectDeleteMethodWithIdIsMissing() throws IOException {
         logger.info("Begin checking request Delete with Id is missing");
-        long idDataTest = dataGenerateRandomId();
-        logger.info("Delete ID=missing: Create a test entity with id=" + idDataTest);
-        boolean completedDataTest = randomBooleans();
-        Todo todoEntryDataTest = new Todo(idDataTest, TEXT, completedDataTest);
-        String endPoint = baseURI + TODOS;
-        logger.info("Delete ID=missing: Inserting a test entity " + idDataTest);
-        entryTestData(endPoint, todoEntryDataTest);
-        logger.info("Delete ID=missing: Removing the test entity " + idDataTest);
-        deletingTestDataIdWithLoginAndPassword(endPoint, idDataTest, LOGIN, PASSWORD);
-        logger.info("Delete ID=missing: Create a request Delete with a test entity with id=missing");
-        ValidatableResponse response = responseDelete(endPoint, idDataTest);
-        logger.info("Delete ID=missing: Create a request Get with a test entity");
-        ValidatableResponse validatableResponse = responseGet();
-        logger.info("Delete ID=missing: Create a list of received entities");
-        List<Todo> todoList = extractTodoList(validatableResponse);
-        logger.info("Delete ID=missing: Checking for a negative result");
-        assertAll(
-                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_404),
-                () -> softAssertions.assertThat(false).isEqualTo(todoList.contains(idDataTest))
+
+        long actualId = dataGenerateRandomId();
+
+        logger.info("Pre-condition: Inserting a test entity with id=" + actualId);
+        requestPost(
+                END_POINT,
+                new Todo(actualId, DEFAULT_TEXT, randomBooleans())
         );
+
+        logger.info("Removing the test entity with id=" + actualId);
+        requestDeleteIdWithLoginAndPassword(END_POINT, actualId, LOGIN, PASSWORD);
+
+        logger.info("Create a request Delete with a test entity with id is missing");
+        ValidatableResponse responseActual = requestDeleteIdWithLoginAndPassword(END_POINT, actualId, LOGIN, PASSWORD);
+
+        logger.info("Create a list of received entities from request Get");
+        List<Todo> todoList = extractTodoList(requestGet(END_POINT));
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(responseActual.extract().statusCode()).isEqualTo(STATUS_CODE_404),
+                () -> softAssertions.assertThat(todoList.contains(actualId)).isEqualTo(false)
+        );
+
         logger.info("End checking request Delete with Id is missing");
     }
 
-    @DisplayName(" request Delete with not valid Login and Password")
+    @DisplayName(" request Delete with not valid Login")
     @Test
-    public void shouldHaveIncorrectDeleteMethodWithNotValidLoginAndPassword() throws IOException {
-        logger.info("Begin checking request Delete with not valid Login and Password");
-        long idDataTest = dataGenerateRandomId();
-        logger.info("Delete not valid auth: Create a test entity with id=" + idDataTest);
-        boolean completedDataTest = randomBooleans();
-        Todo todoEntryDataTest = new Todo(idDataTest, TEXT, completedDataTest);
-        String endPoint = baseURI + TODOS;
-        logger.info("Delete not valid auth: Inserting a test entity " + idDataTest);
-        entryTestData(endPoint, todoEntryDataTest);
-        logger.info("Delete not valid auth: Create random login and password");
-        String login = new Random().toString();
-        String password = new Random().toString();
-        logger.info("Delete not valid auth: Create a request Delete with a not valid login and password");
-        ValidatableResponse response = responseDeleteWithLoginAndPassword(endPoint, idDataTest, login, password);
-        logger.info("Delete not valid auth: Create a request Get with a test entity");
-        ValidatableResponse validatableResponse = responseGet();
-        logger.info("Delete not valid auth: Create a list of received entities");
-        List<Todo> todoList = extractTodoList(validatableResponse);
-        logger.info("Delete not valid auth: Checking for a negative result");
-        assertAll(
-                () -> softAssertions.assertThat(response.extract().statusCode()).isEqualTo(STATUS_CODE_401),
-                () -> softAssertions.assertThat(true).isEqualTo(todoList.contains(idDataTest))
+    public void shouldHaveIncorrectDeleteMethodWithNotValidLogin() throws IOException {
+        logger.info("Begin checking request Delete with not valid Login");
+
+        long actualId = dataGenerateRandomId();
+
+        logger.info("Pre-condition: Inserting a test entity with id=" + actualId);
+        requestPost(
+                END_POINT,
+                new Todo(actualId, DEFAULT_TEXT, randomBooleans())
         );
-        logger.info("Delete not valid auth: Removing the test entity " + idDataTest);
-        deletingTestDataIdWithLoginAndPassword(endPoint,idDataTest, LOGIN, PASSWORD);
-        logger.info("End checking request Delete with not valid Login and Password");
+
+        logger.info("Create a request Delete with a not valid login");
+        ValidatableResponse responseActual = requestDeleteIdWithLoginAndPassword(END_POINT, actualId, new Random().toString(), PASSWORD);
+
+       logger.info("Create a list of received entities");
+        List<Todo> todoList = extractTodoList(requestGet(END_POINT));
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(responseActual.extract().statusCode()).isEqualTo(STATUS_CODE_401),
+                () -> softAssertions.assertThat(todoList.contains(actualId)).isEqualTo(true)
+        );
+
+        logger.info("Post-condition: Removing the test entity with id=" + actualId);
+        requestDeleteIdWithLoginAndPassword(END_POINT, actualId, LOGIN, PASSWORD);
+
+        logger.info("End checking request Delete with not valid Login");
+    }
+
+    @DisplayName(" request Delete with not valid Password")
+    @Test
+    public void shouldHaveIncorrectDeleteMethodWithNotValidPassword() throws IOException {
+        logger.info("Begin checking request Delete with not valid Password");
+
+        long actualId = dataGenerateRandomId();
+
+        logger.info("Pre-condition: Inserting a test entity with id=" + actualId);
+        requestPost(
+                END_POINT,
+                new Todo(actualId, DEFAULT_TEXT, randomBooleans())
+        );
+
+        logger.info("Create a request Delete with a not valid Password");
+        ValidatableResponse responseActual = requestDeleteIdWithLoginAndPassword(END_POINT, actualId, LOGIN, new Random().toString());
+
+       logger.info("Create a list of received entities");
+        List<Todo> todoList = extractTodoList(requestGet(END_POINT));
+
+        logger.info("Checking for a negative result");
+        assertAll(
+                () -> softAssertions.assertThat(responseActual.extract().statusCode()).isEqualTo(STATUS_CODE_401),
+                () -> softAssertions.assertThat(todoList.contains(actualId)).isEqualTo(true)
+        );
+
+        logger.info("Post-condition: Removing the test entity with id=" + actualId);
+        requestDeleteIdWithLoginAndPassword(END_POINT, actualId, LOGIN, PASSWORD);
+
+        logger.info("End checking request Delete with not valid Password");
     }
 }

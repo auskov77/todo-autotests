@@ -7,14 +7,13 @@ import ru.buttonone.domain.Todo;
 import java.io.IOException;
 
 public class Converter {
+    public static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static String todoToJson(Todo todo) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(todo);
+        return MAPPER.writeValueAsString(todo);
     }
 
     public static Object jsonToTodo(String json) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, Todo.class);
+        return MAPPER.readValue(json, Todo.class);
     }
 }

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
-import static ru.buttonone.utils.TodoApiConstants.TODOS;
+import static ru.buttonone.utils.TodoApiConstants.DEFAULT_TODOS;
 
 public enum DataGeneratorTodoId {
     INSTANCE;
@@ -16,7 +16,7 @@ public enum DataGeneratorTodoId {
     public synchronized long todoRandomId() {
         ValidatableResponse response = given()
                 .when()
-                .get(baseURI + TODOS)
+                .get(baseURI + DEFAULT_TODOS)
                 .then();
         List<Todo> todoList = response
                 .extract()

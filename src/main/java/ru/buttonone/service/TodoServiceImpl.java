@@ -7,36 +7,37 @@ import ru.buttonone.domain.Todo;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static ru.buttonone.utils.TodoApiConstants.*;
 
 public class TodoServiceImpl implements TodoService {
 
     @Override
-    public ValidatableResponse requestGetMethod(String endPoint) {
+    public ValidatableResponse requestGetMethod() {
         return given()
                 .when()
-                .get(endPoint)
+                .get(DEFAULT_ENDPOINT)
                 .then();
     }
 
     @Override
-    public ValidatableResponse requestPostMethod(String endPoint, String jsonBody) {
+    public ValidatableResponse requestPostMethod(String jsonBody) {
         return given()
                 .contentType(ContentType.JSON)
                 .and()
                 .body(jsonBody)
                 .when()
-                .post(endPoint)
+                .post(DEFAULT_ENDPOINT)
                 .then();
     }
 
     @Override
-    public ValidatableResponse requestDeleteMethodWithLoginAndPassword(String endPoint, long id, String login, String password) {
+    public ValidatableResponse requestDeleteMethodWithLoginAndPassword(long id, String login, String password) {
         return given()
                 .auth()
                 .preemptive()
                 .basic(login, password)
                 .when()
-                .delete(endPoint + "/" + id)
+                .delete(DEFAULT_ENDPOINT + "/" + id)
                 .then();
     }
 
@@ -50,13 +51,13 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public ValidatableResponse requestPut(String todoToJson, String endPoint, long id) {
+    public ValidatableResponse requestPut(String todoToJson, long id) {
         return given()
                 .contentType(ContentType.JSON)
                 .and()
                 .body(todoToJson)
                 .when()
-                .put(endPoint + "/" + id)
+                .put(DEFAULT_ENDPOINT + "/" + id)
                 .then();
     }
 

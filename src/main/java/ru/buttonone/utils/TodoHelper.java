@@ -1,28 +1,23 @@
 package ru.buttonone.utils;
 
 import ru.buttonone.domain.Todo;
-import ru.buttonone.service.DataGeneratorTodoId;
+import ru.buttonone.service.GeneratorId;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class TodoHelper {
 
     public static boolean randomBooleans() {
-        Random booleans = new Random();
-        return booleans.nextBoolean();
+        return new Random().nextBoolean();
     }
 
-    public static long dataGenerateRandomId() {
-        return DataGeneratorTodoId.INSTANCE.todoRandomId();
+    public static long generatedId() {
+        return GeneratorId.INSTANCE.generatedId();
     }
 
-    public static Todo extractingTodoFromTheListOfReceivedTodos(List<Todo> todoList, long id) {
-        for (Todo todo : todoList) {
-            if (todo.getId() == id) {
-                return todo;
-            }
-        }
-        return null;
+    public static Optional<Todo> getTodoIdFromList(List<Todo> todoList, long id) {
+        return todoList.stream().filter(todo -> todo.getId() == id).findAny();
     }
 }

@@ -12,7 +12,7 @@ import static ru.buttonone.utils.TodoApiConstants.*;
 public class TodoServiceImpl implements TodoService {
 
     @Override
-    public ValidatableResponse requestGet() {
+    public ValidatableResponse requestGetMethod() {
         return given()
                 .when()
                 .get(DEFAULT_ENDPOINT)
@@ -20,7 +20,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public ValidatableResponse requestPost(String jsonBody) {
+    public ValidatableResponse requestPostMethod(String jsonBody) {
         return given()
                 .contentType(ContentType.JSON)
                 .and()
@@ -31,7 +31,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public ValidatableResponse requestDeleteIdWithLoginPassword(long id, String login, String password) {
+    public ValidatableResponse requestDeleteMethodWithLoginAndPassword(long id, String login, String password) {
         return given()
                 .auth()
                 .preemptive()
@@ -42,7 +42,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public List<Todo> getTodoList(ValidatableResponse validatableResponse) {
+    public List<Todo> extractTodoList(ValidatableResponse validatableResponse) {
         return validatableResponse
                 .extract()
                 .body()

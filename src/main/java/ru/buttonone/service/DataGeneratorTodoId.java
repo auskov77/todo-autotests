@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import static io.restassured.RestAssured.given;
 import static ru.buttonone.utils.TodoApiConstants.DEFAULT_ENDPOINT;
 
-public enum GeneratorId {
+public enum DataGeneratorTodoId {
     INSTANCE;
 
-    public synchronized long generatedId() {
+    public synchronized long todoRandomId() {
         ValidatableResponse response = given()
                 .when()
                 .get(DEFAULT_ENDPOINT)
@@ -23,9 +23,9 @@ public enum GeneratorId {
                 .jsonPath()
                 .getList("", Todo.class);
         List<Long> listId = todoList.stream().map(Todo::getId).collect(Collectors.toList());
-        long randomId = (long) (Math.random() * 99) + 1;
+        long randomId = (long) (Math.random() * (100 - 1)) + 1;
         if (listId.contains(randomId)) {
-            return generatedId();
+            return todoRandomId();
         }
         return randomId;
     }

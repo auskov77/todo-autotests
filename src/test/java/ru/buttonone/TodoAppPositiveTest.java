@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static ru.buttonone.service.Converter.todoToJson;
 import static ru.buttonone.utils.TodoApiConstants.*;
 import static ru.buttonone.utils.TodoHelper.*;
-import static org.assertj.core.api.Assertions.*;
 
 @DisplayName(" positive checks:")
 public class TodoAppPositiveTest extends BaseTest {

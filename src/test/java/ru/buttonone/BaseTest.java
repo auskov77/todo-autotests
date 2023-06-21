@@ -8,5 +8,4 @@ import ru.buttonone.service.TodoServiceImpl;
 public class BaseTest {
     public final static TodoService TODO_SERVICE = new TodoServiceImpl();
     public final Logger logger = LoggerFactory.getLogger(BaseTest.class);
-
 }

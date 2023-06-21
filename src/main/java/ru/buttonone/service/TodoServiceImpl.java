@@ -1,5 +1,6 @@
 package ru.buttonone.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import ru.buttonone.domain.Todo;
@@ -8,6 +9,7 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static ru.buttonone.utils.TodoApiConstants.*;
+import static ru.buttonone.service.Converter.*;
 
 public class TodoServiceImpl implements TodoService {
 
@@ -20,18 +22,18 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public ValidatableResponse requestPost(String jsonBody) {
+    public ValidatableResponse requestPost(Todo todo) throws JsonProcessingException {
         return given()
                 .contentType(ContentType.JSON)
                 .and()
-                .body(jsonBody)
+                .body(todoToJson(todo))
                 .when()
                 .post(DEFAULT_ENDPOINT)
                 .then();
     }
 
     @Override
-    public ValidatableResponse requestDeleteIdWithLoginPassword(long id, String login, String password) {
+    public ValidatableResponse requestDeleteByIdWithLoginPassword(long id, String login, String password) {
         return given()
                 .auth()
                 .preemptive()

@@ -27,10 +27,10 @@ public class TodoAppNegativeTest extends BaseTest {
         long actualId = -1;
 
         logger.info("Create a request Post with a test entity with Id=" + actualId);
-        ValidatableResponse responseActual = requestPost(new Todo(actualId, DEFAULT_TEXT, randomBooleans()));
+        ValidatableResponse responseActual = TODO_SERVICE.requestPost(new Todo(actualId, DEFAULT_TEXT, randomBooleans()));
 
         logger.info("Create a list of received entities from request Get");
-        List<Todo> todoList = getTodoList(requestGet());
+        List<Todo> todoList = TODO_SERVICE.getTodoList(TODO_SERVICE.requestGet());
 
         logger.info("Checking for a negative result");
         assertAll(
@@ -47,10 +47,10 @@ public class TodoAppNegativeTest extends BaseTest {
         logger.info("Begin checking request Post with ID is null");
 
         logger.info("Create a request Post with a test entity with Id is null");
-        ValidatableResponse responseActual = requestPost(new Todo(null, DEFAULT_TEXT, randomBooleans()));
+        ValidatableResponse responseActual = TODO_SERVICE.requestPost(new Todo(null, DEFAULT_TEXT, randomBooleans()));
 
         logger.info("Create a list of received entities from request Get");
-        List<Todo> todoList = getTodoList(requestGet());
+        List<Todo> todoList = TODO_SERVICE.getTodoList(TODO_SERVICE.requestGet());
 
         logger.info("Checking for a negative result");
         assertAll(
@@ -69,10 +69,10 @@ public class TodoAppNegativeTest extends BaseTest {
         long actualId = generatedId();
 
         logger.info("Create a request Post with a test entity with Text is null");
-        ValidatableResponse responseActual = requestPost(new Todo(actualId, null, randomBooleans()));
+        ValidatableResponse responseActual = TODO_SERVICE.requestPost(new Todo(actualId, null, randomBooleans()));
 
         logger.info("Create a list of received entities");
-        List<Todo> todoList = getTodoList(requestGet());
+        List<Todo> todoList = TODO_SERVICE.getTodoList(TODO_SERVICE.requestGet());
 
         logger.info("Checking for a negative result");
         assertAll(
@@ -91,10 +91,10 @@ public class TodoAppNegativeTest extends BaseTest {
         long actualId = generatedId();
 
         logger.info("Create a request Post with a test entity with Completed is null");
-        ValidatableResponse responseActual = requestPost(new Todo(actualId, DEFAULT_TEXT, null));
+        ValidatableResponse responseActual = TODO_SERVICE.requestPost(new Todo(actualId, DEFAULT_TEXT, null));
 
         logger.info("Create a list of received entities");
-        List<Todo> todoList = getTodoList(requestGet());
+        List<Todo> todoList = TODO_SERVICE.getTodoList(TODO_SERVICE.requestGet());
 
         logger.info("Checking for a negative result");
         assertAll(
@@ -116,19 +116,19 @@ public class TodoAppNegativeTest extends BaseTest {
                 "Id=" + idDataTest + ", " +
                 "Text=" + DEFAULT_TEXT + ", " +
                 "Completed=" + DEFAULT_COMPLETED_FALSE);
-        requestPost(new Todo(idDataTest, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE));
+        TODO_SERVICE.requestPost(new Todo(idDataTest, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE));
 
         logger.info("Create a request Put with a test entity with " +
                 "Id is null, " +
                 "Text=" + DEFAULT_TEXT + ", " +
                 "Completed=" + DEFAULT_COMPLETED_FALSE);
-        ValidatableResponse responseActualPut = requestPut(
+        ValidatableResponse responseActualPut = TODO_SERVICE.requestPut(
                 todoToJson(new Todo(null, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE)),
                 idDataTest
         );
 
         logger.info("Extracting todoActual a list from request Get of received entities");
-        List<Todo> todoListActual = getTodoList(requestGet());
+        List<Todo> todoListActual = TODO_SERVICE.getTodoList(TODO_SERVICE.requestGet());
 
         logger.info("Checking for a negative result");
         assertAll(
@@ -137,7 +137,7 @@ public class TodoAppNegativeTest extends BaseTest {
         );
 
         logger.info("Post-condition: Removing the test entity with Id=" + idDataTest);
-        requestDeleteIdWithLoginPassword(idDataTest, LOGIN, PASSWORD);
+        TODO_SERVICE.requestDeleteByIdWithLoginPassword(idDataTest, LOGIN, PASSWORD);
 
         logger.info("End checking request Put with Id is null");
     }
@@ -153,19 +153,19 @@ public class TodoAppNegativeTest extends BaseTest {
                 "Id=" + idDataTest + ", " +
                 "Text=" + DEFAULT_TEXT + ", " +
                 "Completed=" + DEFAULT_COMPLETED_FALSE);
-        requestPost(new Todo(idDataTest, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE));
+        TODO_SERVICE.requestPost(new Todo(idDataTest, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE));
 
         logger.info("Create a request Put with a test entity with " +
                 "Id=" + idDataTest + ", " +
                 "Text is null, " +
                 "Completed=" + DEFAULT_COMPLETED_FALSE);
-        ValidatableResponse responseActualPut = requestPut(
+        ValidatableResponse responseActualPut = TODO_SERVICE.requestPut(
                 todoToJson(new Todo(idDataTest, null, DEFAULT_COMPLETED_FALSE)),
                 idDataTest
         );
 
         logger.info("Extracting todoActual a list from request Get of received entities");
-        List<Todo> todoListActual = getTodoList(requestGet());
+        List<Todo> todoListActual = TODO_SERVICE.getTodoList(TODO_SERVICE.requestGet());
 
         logger.info("Checking for a negative result");
         assertAll(
@@ -174,7 +174,7 @@ public class TodoAppNegativeTest extends BaseTest {
         );
 
         logger.info("Post-condition: Removing the test entity with id=" + idDataTest);
-        requestDeleteIdWithLoginPassword(idDataTest, LOGIN, PASSWORD);
+        TODO_SERVICE.requestDeleteByIdWithLoginPassword(idDataTest, LOGIN, PASSWORD);
 
         logger.info("End checking request Put with Text is null");
     }
@@ -190,19 +190,19 @@ public class TodoAppNegativeTest extends BaseTest {
                 "Id=" + idDataTest + ", " +
                 "Text=" + DEFAULT_TEXT + ", " +
                 "Completed=" + DEFAULT_COMPLETED_FALSE);
-        requestPost(new Todo(idDataTest, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE));
+        TODO_SERVICE.requestPost(new Todo(idDataTest, DEFAULT_TEXT, DEFAULT_COMPLETED_FALSE));
 
         logger.info("Create a request Put with a test entity with " +
                 "Id=" + idDataTest + ", " +
                 "Text=" + DEFAULT_TEXT + ", " +
                 "Completed is null");
-        ValidatableResponse responseActualPut = requestPut(
+        ValidatableResponse responseActualPut = TODO_SERVICE.requestPut(
                 todoToJson(new Todo(idDataTest, DEFAULT_TEXT, null)),
                 idDataTest
         );
 
         logger.info("Extracting todoActual a list from request Get of received entities");
-        List<Todo> todoListActual = getTodoList(requestGet());
+        List<Todo> todoListActual = TODO_SERVICE.getTodoList(TODO_SERVICE.requestGet());
 
         logger.info("Checking for a negative result");
         assertAll(
@@ -211,7 +211,7 @@ public class TodoAppNegativeTest extends BaseTest {
         );
 
         logger.info("Post-condition: Removing the test entity with Id=" + idDataTest);
-        requestDeleteIdWithLoginPassword(idDataTest, LOGIN, PASSWORD);
+        TODO_SERVICE.requestDeleteByIdWithLoginPassword(idDataTest, LOGIN, PASSWORD);
 
         logger.info("End checking request Put with Completed is null");
     }
@@ -224,16 +224,16 @@ public class TodoAppNegativeTest extends BaseTest {
         long actualId = generatedId();
 
         logger.info("Pre-condition: Inserting a test entity with Id=" + actualId);
-        requestPost(new Todo(actualId, DEFAULT_TEXT, randomBooleans()));
+        TODO_SERVICE.requestPost(new Todo(actualId, DEFAULT_TEXT, randomBooleans()));
 
         logger.info("Removing the test entity with Id=" + actualId);
-        requestDeleteIdWithLoginPassword(actualId, LOGIN, PASSWORD);
+        TODO_SERVICE.requestDeleteByIdWithLoginPassword(actualId, LOGIN, PASSWORD);
 
         logger.info("Create a request Delete with a test entity with Id is missing");
-        ValidatableResponse responseActual = requestDeleteIdWithLoginPassword(actualId, LOGIN, PASSWORD);
+        ValidatableResponse responseActual = TODO_SERVICE.requestDeleteByIdWithLoginPassword(actualId, LOGIN, PASSWORD);
 
         logger.info("Create a list of received entities from request Get");
-        List<Todo> todoList = getTodoList(requestGet());
+        List<Todo> todoList = TODO_SERVICE.getTodoList(TODO_SERVICE.requestGet());
 
         logger.info("Checking for a negative result");
         assertAll(
@@ -252,22 +252,22 @@ public class TodoAppNegativeTest extends BaseTest {
         long actualId = generatedId();
 
         logger.info("Pre-condition: Inserting a test entity with Id=" + actualId);
-        requestPost(new Todo(actualId, DEFAULT_TEXT, randomBooleans()));
+        TODO_SERVICE.requestPost(new Todo(actualId, DEFAULT_TEXT, randomBooleans()));
 
         logger.info("Create a request Delete with a not valid login");
-        ValidatableResponse responseActual = requestDeleteIdWithLoginPassword(actualId, new Random().toString(), PASSWORD);
+        ValidatableResponse responseActual = TODO_SERVICE.requestDeleteByIdWithLoginPassword(actualId, new Random().toString(), PASSWORD);
 
         logger.info("Create a list of received entities");
-        List<Todo> todoList = getTodoList(requestGet());
+        List<Todo> todoList = TODO_SERVICE.getTodoList(TODO_SERVICE.requestGet());
 
         logger.info("Checking for a negative result");
         assertAll(
                 () -> assertThat(responseActual.extract().statusCode()).isEqualTo(STATUS_CODE_401),
-                () -> assertThat(todoList.stream().filter(todo -> todo.getId() == actualId).count()).isNotNull()
+                () -> assertThat(todoList.stream().filter(todo -> todo.getId() == actualId).count()).isEqualTo(1)
         );
 
         logger.info("Post-condition: Removing the test entity with id=" + actualId);
-        requestDeleteIdWithLoginPassword(actualId, LOGIN, PASSWORD);
+        TODO_SERVICE.requestDeleteByIdWithLoginPassword(actualId, LOGIN, PASSWORD);
 
         logger.info("End checking request Delete with not valid Login");
     }
@@ -280,22 +280,22 @@ public class TodoAppNegativeTest extends BaseTest {
         long actualId = generatedId();
 
         logger.info("Pre-condition: Inserting a test entity with Id=" + actualId);
-        requestPost(new Todo(actualId, DEFAULT_TEXT, randomBooleans()));
+        TODO_SERVICE.requestPost(new Todo(actualId, DEFAULT_TEXT, randomBooleans()));
 
         logger.info("Create a request Delete with a not valid Password");
-        ValidatableResponse responseActual = requestDeleteIdWithLoginPassword(actualId, LOGIN, new Random().toString());
+        ValidatableResponse responseActual = TODO_SERVICE.requestDeleteByIdWithLoginPassword(actualId, LOGIN, new Random().toString());
 
         logger.info("Create a list of received entities");
-        List<Todo> todoList = getTodoList(requestGet());
+        List<Todo> todoList = TODO_SERVICE.getTodoList(TODO_SERVICE.requestGet());
 
         logger.info("Checking for a negative result");
         assertAll(
                 () -> assertThat(responseActual.extract().statusCode()).isEqualTo(STATUS_CODE_401),
-                () -> assertThat(todoList.stream().filter(todo -> todo.getId() == actualId).count()).isNotNull()
+                () -> assertThat(todoList.stream().filter(todo -> todo.getId() == actualId).count()).isEqualTo(1)
         );
 
         logger.info("Post-condition: Removing the test entity with id=" + actualId);
-        requestDeleteIdWithLoginPassword(actualId, LOGIN, PASSWORD);
+        TODO_SERVICE.requestDeleteByIdWithLoginPassword(actualId, LOGIN, PASSWORD);
 
         logger.info("End checking request Delete with not valid Password");
     }
